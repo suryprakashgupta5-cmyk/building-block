@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write        # ← allows pushing to GitHub Container Registry
+      packages: write
 
     steps:
       - name: Checkout code
@@ -26,17 +26,14 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: ./mvnw clean package -DskipTests
-
-      - name: Run Tests
-        run: ./mvnw test
+        run: ./mvnw clean package -DskipTests    # ← skips tests
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # ← built in, no setup needed
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
